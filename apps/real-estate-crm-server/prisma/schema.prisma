@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Property {
+  address            String?
+  agentAssignments   AgentAssignment[]
+  appointments       Appointment[]
+  areaSize           Int?
+  availabilityStatus String?
+  category           String?
+  createdAt          DateTime          @default(now())
+  id                 String            @id @default(cuid())
+  listingPrice       Float?
+  price              Float?
+  propertyCategory   String?
+  propertyType       String?
+  size               Int?
+  status             String?
+  streetAddress      String?
+  updatedAt          DateTime          @updatedAt
+}
+
+model AgentAssignment {
+  agentName  String?
+  createdAt  DateTime                   @default(now())
+  endDate    DateTime?
+  id         String                     @id @default(cuid())
+  property   Property?                  @relation(fields: [propertyId], references: [id])
+  propertyId String?
+  startDate  DateTime?
+  status     EnumAgentAssignmentStatus?
+  updatedAt  DateTime                   @updatedAt
+}
+
+model Client {
+  appointments           Appointment[]
+  createdAt              DateTime                          @default(now())
+  email                  String?
+  id                     String                            @id @default(cuid())
+  name                   String?
+  phone                  String?
+  preferredContactMethod EnumClientPreferredContactMethod?
+  updatedAt              DateTime                          @updatedAt
+}
+
+model Appointment {
+  client     Client?   @relation(fields: [clientId], references: [id])
+  clientId   String?
+  createdAt  DateTime  @default(now())
+  date       DateTime?
+  id         String    @id @default(cuid())
+  location   String?
+  notes      String?
+  property   Property? @relation(fields: [propertyId], references: [id])
+  propertyId String?
+  time       DateTime?
+  updatedAt  DateTime  @updatedAt
+}
+
+enum EnumAgentAssignmentStatus {
+  Option1
+}
+
+enum EnumClientPreferredContactMethod {
+  Option1
+}
